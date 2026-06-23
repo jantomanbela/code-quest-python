@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐢 CODE QUEST – Python Turtle</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0a1a;--bg2:#13132a;--bg3:#1a1a35;--border:#252545;
+  --green:#22C55E;--green-bg:#052e16;
+  --yellow:#FACC15;--yellow-bg:#1c1400;
+  --red:#EF4444;--red-bg:#1a0505;
+  --blue:#38BDF8;--blue-bg:#0c1a2e;
+  --purple:#A78BFA;--purple-bg:#1a0a2e;
+  --text:#F1F1FF;--text2:#9999BB;--text3:#5555AA;
+  --py-green:#4CAF50;--py-blue:#2196F3;--py-orange:#FF9800;--py-purple:#9C27B0;--py-red:#F44336;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;}
+
+.pixel{font-family:'Press Start 2P',monospace;}
+
+/* HERO */
+.hero{background:var(--bg);padding:56px 20px 44px;text-align:center;border-bottom:2px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(56,189,248,.07) 0%,transparent 70%);pointer-events:none;}
+.hero-eye{font-size:11px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-family:'Press Start 2P',monospace;font-size:clamp(22px,5vw,48px);color:var(--blue);line-height:1.25;margin-bottom:10px;}
+.hero-sub{color:var(--text2);font-size:16px;margin-bottom:28px;}
+.hero-levels{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+.lpill{padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:.2s;}
+.lpill:hover,.lpill.active{transform:translateY(-2px);}
+.p-g{background:var(--green-bg);color:var(--green);border-color:var(--green);}
+.p-y{background:var(--yellow-bg);color:var(--yellow);border-color:var(--yellow);}
+.p-r{background:var(--red-bg);color:var(--red);border-color:var(--red);}
+.p-g.active{background:var(--green);color:#052e16;}
+.p-y.active{background:var(--yellow);color:#1c1400;}
+.p-r.active{background:var(--red);color:#1a0505;}
+.hero-inputs{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
+.iw{display:flex;flex-direction:column;gap:5px;}
+.iw label{font-size:11px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;}
+.iw input{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 14px;font-size:14px;font-family:'Inter',sans-serif;width:190px;outline:none;transition:.2s;}
+.iw input:focus{border-color:var(--blue);}
+
+/* PROGRESS */
+.prog-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 22px;display:flex;align-items:center;gap:14px;}
+.prog-lbl{font-size:12px;color:var(--text2);white-space:nowrap;min-width:80px;}
+.prog-track{flex:1;height:8px;background:var(--bg3);border-radius:999px;overflow:hidden;max-width:360px;}
+.prog-fill{height:100%;border-radius:999px;background:var(--blue);transition:width .5s cubic-bezier(.34,1.56,.64,1);}
+.prog-pct{font-size:12px;font-weight:700;color:var(--blue);min-width:34px;text-align:right;}
+.xp{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:700;margin-left:auto;}
+
+/* PAGE */
+.page{display:none;max-width:820px;margin:0 auto;padding:34px 20px 80px;}
+.page.active{display:block;}
+
+/* LEVEL HEADER */
+.lh{border-radius:12px;padding:26px 30px;margin-bottom:30px;border:2px solid;}
+.lh-g{background:var(--green-bg);border-color:var(--green);}
+.lh-y{background:var(--yellow-bg);border-color:var(--yellow);}
+.lh-r{background:var(--red-bg);border-color:var(--red);}
+.lh-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.lh-g .lh-tag{color:var(--green);}
+.lh-y .lh-tag{color:var(--yellow);}
+.lh-r .lh-tag{color:var(--red);}
+.lh-title{font-family:'Press Start 2P',monospace;font-size:clamp(14px,2.5vw,22px);line-height:1.45;margin-bottom:9px;}
+.lh-g .lh-title{color:var(--green);}
+.lh-y .lh-title{color:var(--yellow);}
+.lh-r .lh-title{color:var(--red);}
+.lh-sub{color:var(--text2);font-size:14px;}
+
+/* SECTION */
+.sec{margin-bottom:32px;}
+.sec-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;border-radius:7px;margin-bottom:14px;display:flex;align-items:center;gap:7px;border-left:3px solid;}
+.st-g{background:var(--green-bg);color:var(--green);border-color:var(--green);}
+.st-y{background:var(--yellow-bg);color:var(--yellow);border-color:var(--yellow);}
+.st-r{background:var(--red-bg);color:var(--red);border-color:var(--red);}
+.st-b{background:var(--blue-bg);color:var(--blue);border-color:var(--blue);}
+.st-dk{background:var(--bg3);color:var(--yellow);border-color:var(--yellow);}
+
+/* OPEN BUTTON */
+.open-cta{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:18px 22px;margin-bottom:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.open-btn{display:inline-flex;align-items:center;gap:8px;background:var(--py-blue);color:#fff;font-weight:700;font-size:14px;padding:11px 22px;border-radius:9px;text-decoration:none;transition:.15s;white-space:nowrap;}
+.open-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.open-cta p{color:var(--text2);font-size:13px;flex:1;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:7px;margin:10px 0;}
+.step{display:flex;gap:13px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:13px 15px;cursor:pointer;transition:.2s;user-select:none;}
+.step:hover{border-color:var(--text3);}
+.step.done{background:#061a10;border-color:var(--green);}
+.step-n{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);color:var(--text2);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s;}
+.step.done .step-n{background:var(--green);border-color:var(--green);color:#052e16;}
+.step-t{flex:1;padding-top:3px;font-size:14px;}
+.step.done .step-t{color:var(--text2);}
+.step-ck{width:21px;height:21px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;transition:.2s;font-size:13px;}
+.step.done .step-ck{background:var(--green);border-color:var(--green);color:#052e16;}
+.step.done .step-ck::after{content:'✓';font-weight:900;}
+
+/* CODE BLOCK */
+.code{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:14px 18px;margin:12px 0;font-family:'Courier New',monospace;font-size:13px;line-height:1.8;overflow-x:auto;}
+.code .kw{color:#FF79C6;}
+.code .fn{color:#50FA7B;}
+.code .str{color:#F1FA8C;}
+.code .num{color:#BD93F9;}
+.code .cm{color:#6272A4;font-style:italic;}
+.code .var{color:#8BE9FD;}
+.code-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+
+/* WHERE */
+.where{background:var(--bg3);border-left:3px solid var(--py-blue);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-size:13px;color:var(--text2);}
+.where strong{color:var(--py-orange);display:block;margin-bottom:5px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* CALLOUTS */
+.tip{background:#0a1830;border-left:3px solid #3B82F6;border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-size:14px;color:var(--text2);}
+.tip strong{color:#60A5FA;display:block;margin-bottom:3px;}
+.warn{background:#1a0f00;border-left:3px solid #F59E0B;border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-size:14px;color:var(--text2);}
+.warn strong{color:#F59E0B;display:block;margin-bottom:3px;}
+.think{background:#0f0f2a;border:1px dashed var(--text3);border-radius:8px;padding:11px 15px;margin:10px 0;font-size:14px;color:var(--text2);}
+.think::before{content:'🤔  Přemýšlej: ';font-weight:700;color:var(--purple);}
+
+/* HINT */
+.hint-btn{background:var(--bg3);border:1px dashed var(--border);border-radius:7px;padding:7px 13px;font-size:13px;color:var(--text3);cursor:pointer;margin-top:7px;font-family:'Inter',sans-serif;transition:.2s;display:inline-flex;align-items:center;gap:5px;}
+.hint-btn:hover{color:var(--text);border-color:var(--text3);}
+.hint-body{display:none;background:var(--bg3);border-radius:7px;padding:11px 15px;margin-top:5px;font-size:13px;color:var(--text2);border-left:3px solid var(--purple);}
+.hint-body.open{display:block;}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:5px;}
+.ci{display:flex;gap:9px;align-items:flex-start;padding:9px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;transition:.2s;}
+.ci:has(input:checked){background:#061a10;border-color:var(--green);}
+.ci input[type=checkbox]{width:17px;height:17px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer;}
+.ci label{cursor:pointer;font-size:14px;color:var(--text2);}
+.ci:has(input:checked) label{opacity:.55;text-decoration:line-through;}
+
+/* LEVEL COMPLETE */
+.lc{display:none;text-align:center;padding:36px 20px;background:var(--green-bg);border:2px solid var(--green);border-radius:14px;margin-top:28px;}
+.lc .pixel{font-size:clamp(13px,2.5vw,18px);color:var(--green);line-height:1.6;}
+.lc p{color:var(--text2);margin-top:10px;font-size:14px;}
+.next-btn{display:inline-flex;align-items:center;gap:7px;background:var(--green);color:#052e16;font-weight:700;font-size:14px;padding:11px 26px;border-radius:9px;border:none;cursor:pointer;font-family:'Inter',sans-serif;margin-top:18px;transition:.15s;}
+.next-btn:hover{filter:brightness(1.1);}
+
+/* ASSESS */
+.at{width:100%;border-collapse:separate;border-spacing:0 5px;font-size:14px;}
+.at th{background:var(--bg3);color:var(--yellow);padding:9px 13px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;}
+.at th:not(:first-child){text-align:center;}
+.at td{padding:9px 13px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.at td:first-child{border-left:1px solid var(--border);border-radius:7px 0 0 7px;}
+.at td:last-child{border-right:1px solid var(--border);border-radius:0 7px 7px 0;text-align:center;}
+.at td:not(:first-child){text-align:center;}
+.at input[type=radio]{accent-color:var(--green);width:15px;height:15px;cursor:pointer;}
+
+.rf{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.rf label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
+.rf textarea,.rf input[type=text]{background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 13px;font-family:'Inter',sans-serif;font-size:14px;resize:vertical;outline:none;transition:.2s;}
+.rf textarea:focus,.rf input:focus{border-color:var(--blue);}
+p{margin-bottom:7px;}
+b{font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eye">Základní škola Bakov nad Jizerou · Informatika</div>
+  <h1 class="pixel">CODE QUEST</h1>
+  <p class="hero-sub">Programujeme hry v Pythonu — skutečný kód, skutečné hry</p>
+  <div class="hero-levels">
+    <div class="lpill p-g active" onclick="showPage('l1',this)">🟢 Level 1 – Základy</div>
+    <div class="lpill p-y" onclick="showPage('l2',this)">🟡 Level 2 – Pohyb</div>
+    <div class="lpill p-r" onclick="showPage('l3',this)">🔴 Level 3 – Hra</div>
+  </div>
+  <div class="hero-inputs">
+    <div class="iw"><label>Jméno</label><input type="text" placeholder="Tvoje jméno"></div>
+    <div class="iw"><label>Třída</label><input type="text" placeholder="Třída" style="width:110px"></div>
+  </div>
+</div>
+
+<div class="prog-bar">
+  <span class="prog-lbl" id="prog-lbl">Level 1 · 0/0</span>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <span class="prog-pct" id="prog-pct">0%</span>
+  <span class="xp" id="xp-badge">0 XP</span>
+</div>
+
+<!-- ═══════════ LEVEL 1 ═══════════ -->
+<div class="page active" id="page-l1">
+  <div class="lh lh-g">
+    <div class="lh-tag">🟢 Level 1 – Základy Pythonu · cca 20 minut</div>
+    <div class="lh-title">🐢 PRVNÍ PŘÍKAZY</div>
+    <p class="lh-sub">Poprvé napíšeš skutečný kód. Python = jazyk, ve kterém se programují skutečné aplikace, filmy, hry i AI.</p>
+  </div>
+
+  <div class="open-cta">
+    <a class="open-btn" href="https://trinket.io/python/new" target="_blank">🐍 Otevřít Python editor</a>
+    <p>Klikni — editor se otevře v nové záložce. Vlevo píšeš kód, vpravo vidíš výsledek. Žádná instalace.</p>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-g">🎯 Co se naučíš</div>
+    <div class="checklist">
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Co je Python a proč ho používají profesionální programátoři</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Jak nakreslit čáru, čtverec a kruh kódem</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Co je funkce a proč šetří čas</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Smyčka for — opakování bez kopírování kódu</label></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-g">🐢 Krok 1 — Tvůj první Python kód</div>
+    <p>Turtle je želva která kreslí čáry. Říkáš jí kam jít a ona tam nakreslí stopu.</p>
+    <div class="think">Co si myslíš, co udělá příkaz <b>forward(100)</b>? A co <b>right(90)</b>?</div>
+    <div class="code-label" style="margin-top:12px;">Napiš přesně toto do editoru:</div>
+    <div class="code">
+<span class="kw">import</span> <span class="var">turtle</span><br>
+<br>
+<span class="var">t</span> = <span class="var">turtle</span>.<span class="fn">Turtle</span>()<br>
+<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)<br>
+<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)
+    </div>
+    <div class="steps">
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">1</div><div class="step-t">Napiš kód do editoru (vlevo). Nekopíruj — piš ručně, lépe si zapamatuješ.</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">2</div><div class="step-t">Klikni na tlačítko ▶ Run. Co nakreslila želva?</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">3</div><div class="step-t">Změň číslo 100 na 200. Co se změnilo? Zkus i číslo 50.</div><div class="step-ck"></div></div>
+    </div>
+    <div class="tip"><strong>💡 Co znamená t.forward(100)?</strong>t = želva (Turtle). forward = příkaz „jdi dopředu". 100 = o kolik pixelů. Tečka mezi t a forward říká „pošli příkaz forward želvě t".</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-g">⬜ Krok 2 — Nakresli čtverec</div>
+    <div class="think">Čtverec má 4 stejné strany a 4 pravé úhly. Jak by vypadal kód? Zkus ho napsat před tím, než se podíváš na ukázku.</div>
+    <div class="code-label" style="margin-top:12px;">Čtverec — ruční způsob:</div>
+    <div class="code">
+<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)<br>
+<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)<br>
+<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)<br>
+<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)
+    </div>
+    <div class="think">Tohle funguje, ale je to zdlouhavé. Co kdybys chtěl/a čtverec se 100 stranami? Zkus to napsat jinak pomocí smyčky.</div>
+    <div class="code-label" style="margin-top:12px;">Čtverec — chytřejší způsob se smyčkou:</div>
+    <div class="code">
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)
+    </div>
+    <div class="steps">
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">1</div><div class="step-t">Napiš smyčkovou verzi. Pozor na <b>odsazení</b> — 4 mezery před t.forward a t.right jsou povinné!</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">2</div><div class="step-t">Změň range(4) na range(6) a right(90) na right(60). Co vzniklo?</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">3</div><div class="step-t">Zkus range(36) a right(10). Co nakreslí želva?</div><div class="step-ck"></div></div>
+    </div>
+    <div class="tip"><strong>💡 Proč odsazení?</strong>Python pozná co patří do smyčky podle odsazení (mezer na začátku řádku). Bez nich kód nefunguje. Je to jako závorky v matematice — říkají „toto patří sem".</div>
+    <div class="warn"><strong>⚠ Chyba IndentationError?</strong>Máš špatné odsazení. Zkontroluj že řádky uvnitř smyčky začínají 4 mezerami (nebo jedním Tab).</div>
+
+    <div class="lc" id="complete-l1">
+      <div class="pixel">LEVEL 1 CLEAR!</div>
+      <p>Napsal/a jsi skutečný Python kód. Tohle umí jen málokdo ve tvém věku!</p>
+      <button class="next-btn" onclick="showPage('l2',document.querySelectorAll('.lpill')[1]);window.scrollTo(0,0)">Level 2 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ LEVEL 2 ═══════════ -->
+<div class="page" id="page-l2">
+  <div class="lh lh-y">
+    <div class="lh-tag">🟡 Level 2 – Pohyb a barvy · cca 20 minut</div>
+    <div class="lh-title">🎨 OVLÁDÁNÍ A BARVY</div>
+    <p class="lh-sub">Přidáš klávesové ovládání a barvy. Želva začne reagovat na tvoje příkazy.</p>
+  </div>
+
+  <div class="open-cta">
+    <a class="open-btn" href="https://trinket.io/python/new" target="_blank">🐍 Otevřít Python editor</a>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-y">🎯 Co přidáš</div>
+    <div class="checklist">
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Barva čáry a výplně</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Ovládání želvy klávesami WASD nebo šipkami</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Funkce — jak si napsat vlastní příkaz</label></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-y">🎨 Krok 1 — Barvy</div>
+    <div class="code-label">Přidej barvy:</div>
+    <div class="code">
+<span class="kw">import</span> <span class="var">turtle</span><br>
+<span class="var">t</span> = <span class="var">turtle</span>.<span class="fn">Turtle</span>()<br>
+<span class="var">t</span>.<span class="fn">speed</span>(<span class="num">5</span>)<br>
+<br>
+<span class="var">t</span>.<span class="fn">color</span>(<span class="str">"red"</span>)<br>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">100</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">right</span>(<span class="num">90</span>)
+    </div>
+    <div class="steps">
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">1</div><div class="step-t">Napiš kód a spusť. Nakresli červený čtverec.</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">2</div><div class="step-t">Změň "red" na "blue", "green", "gold", "purple". Zkus aspoň 3 barvy.</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">3</div><div class="step-t">Přidej uvnitř smyčky: <b>t.color("red") t.color("blue")</b> — střídej barvy každou stranu.</div><div class="step-ck"></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-y">⌨️ Krok 2 — Ovládání klávesami</div>
+    <div class="think">Jak myslíš, že Python pozná že jsme stiskli klávesu? Musí nějak „naslouchat" klávesnici — jak to udělat?</div>
+    <div class="code-label" style="margin-top:12px;">Ovládání šipkami — kompletní kód:</div>
+    <div class="code">
+<span class="kw">import</span> <span class="var">turtle</span><br>
+<br>
+<span class="var">okno</span> = <span class="var">turtle</span>.<span class="fn">Screen</span>()<br>
+<span class="var">okno</span>.<span class="fn">bgcolor</span>(<span class="str">"black"</span>)<br>
+<span class="var">t</span> = <span class="var">turtle</span>.<span class="fn">Turtle</span>()<br>
+<span class="var">t</span>.<span class="fn">color</span>(<span class="str">"white"</span>)<br>
+<span class="var">t</span>.<span class="fn">speed</span>(<span class="num">0</span>)<br>
+<br>
+<span class="kw">def</span> <span class="fn">vpred</span>(): <span class="var">t</span>.<span class="fn">forward</span>(<span class="num">20</span>)<br>
+<span class="kw">def</span> <span class="fn">vzad</span>(): <span class="var">t</span>.<span class="fn">backward</span>(<span class="num">20</span>)<br>
+<span class="kw">def</span> <span class="fn">vlevo</span>(): <span class="var">t</span>.<span class="fn">left</span>(<span class="num">15</span>)<br>
+<span class="kw">def</span> <span class="fn">vpravo</span>(): <span class="var">t</span>.<span class="fn">right</span>(<span class="num">15</span>)<br>
+<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vpred</span>, <span class="str">"Up"</span>)<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vzad</span>, <span class="str">"Down"</span>)<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vlevo</span>, <span class="str">"Left"</span>)<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vpravo</span>, <span class="str">"Right"</span>)<br>
+<span class="var">okno</span>.<span class="fn">listen</span>()<br>
+<span class="var">okno</span>.<span class="fn">mainloop</span>()
+    </div>
+    <div class="steps">
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">1</div><div class="step-t">Napiš celý kód a spusť. Klikni na výsledek vpravo a zkus šipky.</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">2</div><div class="step-t">Změň číslo 20 u forward na 50. Je pohyb rychlejší? A číslo 15 u left/right — otáčí se rychleji?</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">3</div><div class="step-t">Přidej klávesy "w", "s", "a", "d" — jako alternativní ovládání (stejné funkce, jiné klávesy).</div><div class="step-ck"></div></div>
+    </div>
+    <div class="tip"><strong>💡 Co je def?</strong>def = „define" = nadefinuj funkci. Funkce je pojmenovaný blok kódu který můžeš spustit kdykoli. vpred() je tvůj vlastní příkaz — stejně jako t.forward() je příkaz Pythonu.</div>
+    <div class="warn"><strong>⚠ Klávesy nereagují?</strong>Klikni myší přímo na plochu výsledku (vpravo) — Python musí vědět kde naslouchat klávesnici.</div>
+
+    <div class="lc" id="complete-l2">
+      <div class="pixel">LEVEL 2 CLEAR!</div>
+      <p>Želva reaguje na klávesy — to je základ každé hry s pohybem!</p>
+      <button class="next-btn" onclick="showPage('l3',document.querySelectorAll('.lpill')[2]);window.scrollTo(0,0)">Level 3 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ LEVEL 3 ═══════════ -->
+<div class="page" id="page-l3">
+  <div class="lh lh-r">
+    <div class="lh-tag">🔴 Level 3 – Hotová hra · cca 30 minut</div>
+    <div class="lh-title">🎮 KRESLÍCÍ HRA</div>
+    <p class="lh-sub">Spojíš vše dohromady — ovládání, barvy, herní mechaniku. Výsledek: skutečná hra kterou můžeš ukázat.</p>
+  </div>
+
+  <div class="open-cta">
+    <a class="open-btn" href="https://trinket.io/python/new" target="_blank">🐍 Otevřít Python editor</a>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-r">🎮 Hra: Kreslič s časem</div>
+    <p>Hráč kreslí želvu po obrazovce. Cíl: nakreslit co nejdelší čáru za 30 sekund bez najetí na okraj.</p>
+    <div class="think">Jak poznáš, že želva narazila na okraj? Obrazovka má souřadnice — střed je (0,0), okraje jsou přibližně ±300. Co by se mělo stát při nárazu?</div>
+    <div class="code-label" style="margin-top:14px;">Kompletní hra — napiš po částech:</div>
+    <div class="code">
+<span class="kw">import</span> <span class="var">turtle</span><br>
+<span class="kw">import</span> <span class="var">time</span><br>
+<br>
+<span class="cm"># Nastavení okna</span><br>
+<span class="var">okno</span> = <span class="var">turtle</span>.<span class="fn">Screen</span>()<br>
+<span class="var">okno</span>.<span class="fn">bgcolor</span>(<span class="str">"black"</span>)<br>
+<span class="var">okno</span>.<span class="fn">title</span>(<span class="str">"Kreslič"</span>)<br>
+<br>
+<span class="cm"># Hráč</span><br>
+<span class="var">t</span> = <span class="var">turtle</span>.<span class="fn">Turtle</span>()<br>
+<span class="var">t</span>.<span class="fn">color</span>(<span class="str">"lime"</span>)<br>
+<span class="var">t</span>.<span class="fn">speed</span>(<span class="num">0</span>)<br>
+<span class="var">t</span>.<span class="fn">width</span>(<span class="num">3</span>)<br>
+<br>
+<span class="cm"># Skóre = délka čáry</span><br>
+<span class="var">skore</span> = [<span class="num">0</span>]<br>
+<span class="var">zije</span> = [<span class="kw">True</span>]<br>
+<br>
+<span class="kw">def</span> <span class="fn">vpred</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="var">zije</span>[<span class="num">0</span>]:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">forward</span>(<span class="num">15</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">skore</span>[<span class="num">0</span>] += <span class="num">1</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># Kontrola okraje</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="fn">abs</span>(<span class="var">t</span>.<span class="fn">xcor</span>()) > <span class="num">280</span> <span class="kw">or</span> <span class="fn">abs</span>(<span class="var">t</span>.<span class="fn">ycor</span>()) > <span class="num">280</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">konec</span>()<br>
+<br>
+<span class="kw">def</span> <span class="fn">vzad</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="var">zije</span>[<span class="num">0</span>]: <span class="var">t</span>.<span class="fn">backward</span>(<span class="num">15</span>)<br>
+<span class="kw">def</span> <span class="fn">vlevo</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="var">zije</span>[<span class="num">0</span>]: <span class="var">t</span>.<span class="fn">left</span>(<span class="num">20</span>)<br>
+<span class="kw">def</span> <span class="fn">vpravo</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="var">zije</span>[<span class="num">0</span>]: <span class="var">t</span>.<span class="fn">right</span>(<span class="num">20</span>)<br>
+<br>
+<span class="kw">def</span> <span class="fn">konec</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">zije</span>[<span class="num">0</span>] = <span class="kw">False</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">color</span>(<span class="str">"red"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">t</span>.<span class="fn">write</span>(<span class="str">"KONEC! Skóre: "</span> + <span class="fn">str</span>(<span class="var">skore</span>[<span class="num">0</span>]),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font=(<span class="str">"Arial"</span>, <span class="num">20</span>, <span class="str">"bold"</span>))<br>
+<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vpred</span>, <span class="str">"Up"</span>)<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vzad</span>, <span class="str">"Down"</span>)<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vlevo</span>, <span class="str">"Left"</span>)<br>
+<span class="var">okno</span>.<span class="fn">onkey</span>(<span class="fn">vpravo</span>, <span class="str">"Right"</span>)<br>
+<span class="var">okno</span>.<span class="fn">listen</span>()<br>
+<span class="var">okno</span>.<span class="fn">mainloop</span>()
+    </div>
+    <div class="steps">
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">1</div><div class="step-t">Napiš kód po částech — nejdřív nastavení, pak funkce, pak ovládání. Spusť a otestuj.</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">2</div><div class="step-t">Želva naráží na okraj a zobrazí skóre? Zkus co se stane za hranicí 280.</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">3</div><div class="step-t">Uprav hru: změň barvu čáry, rychlost pohybu (číslo 15), nebo hranici okraje (280).</div><div class="step-ck"></div></div>
+      <div class="step" onclick="toggleStep(this)"><div class="step-n">4</div><div class="step-t">Bonus: přidej t.color("yellow") po každých 10 krocích — čára mění barvu jak roste skóre.</div><div class="step-ck"></div></div>
+    </div>
+    <div class="tip"><strong>💡 Co je abs() a xcor()?</strong>xcor() = aktuální souřadnice X želvy. abs() = absolutní hodnota (kladné číslo). abs(xcor()) > 280 znamená „je želva více než 280 od středu doleva nebo doprava?"</div>
+    <div class="warn"><strong>⚠ Chyba na řádku s abs()?</strong>Zkontroluj odsazení uvnitř funkce vpred() — musí být 8 mezer (2× Tab) u kontroly okraje.</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-r">⭐ Bonus výzvy</div>
+    <div class="checklist">
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Přidej počítadlo skóre viditelné na obrazovce (turtle.write() v smyčce)</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Přidej druhou želvu jiné barvy pro druhého hráče (klávesy W,A,S,D)</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Čára mění barvu po každých 5 krocích</label></div>
+      <div class="ci"><input type="checkbox" onchange="updateProgress()"><label>Přidej překážky — statické želvy na náhodných pozicích</label></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title st-dk">🏆 Sebehodnocení</div>
+    <table class="at">
+      <thead><tr><th>Dovednost</th><th>😕 Potřebuji pomoc</th><th>🙂 Zvládám</th><th>🤩 Skvěle</th></tr></thead>
+      <tbody id="at-body"></tbody>
+    </table>
+    <div style="margin-top:20px;">
+      <div class="rf"><label>Co bylo nejtěžší?</label><textarea rows="2" placeholder="Napiš sem..."></textarea></div>
+      <div class="rf"><label>Moje hra se jmenuje</label><input type="text" placeholder="Název" style="width:220px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.lpill').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  updateProgress();
+}
+function toggleStep(el){
+  el.classList.toggle('done');
+  updateProgress();
+  checkComplete();
+}
+function toggleHint(btn){
+  const b=btn.nextElementSibling;
+  b.classList.toggle('open');
+  btn.textContent=b.classList.contains('open')?'🙈 Skrýt':'💡 Nápověda';
+}
+function updateProgress(){
+  const ap=document.querySelector('.page.active');
+  if(!ap)return;
+  const ts=ap.querySelectorAll('.step').length+ap.querySelectorAll('.ci input').length;
+  const dn=ap.querySelectorAll('.step.done').length+ap.querySelectorAll('.ci input:checked').length;
+  const pct=ts>0?Math.round(dn/ts*100):0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-lbl').textContent='Postup · '+dn+'/'+ts;
+  const xp=document.querySelectorAll('.step.done').length*10+document.querySelectorAll('.ci input:checked').length*5;
+  document.getElementById('xp-badge').textContent=xp+' XP';
+}
+function checkComplete(){
+  const ap=document.querySelector('.page.active');
+  if(!ap)return;
+  const id=ap.id.replace('page-','');
+  const el=document.getElementById('complete-'+id);
+  if(!el)return;
+  const all=ap.querySelectorAll('.step').length;
+  const done=ap.querySelectorAll('.step.done').length;
+  if(done>=Math.ceil(all*0.75))el.style.display='block';
+}
+const skills=['Import a použití knihovny','Proměnné a přiřazení','Smyčka for','Funkce (def)','Klávesové ovládání','Podmínka if','Souřadnice a detekce okraje'];
+const tb=document.getElementById('at-body');
+skills.forEach((s,i)=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td>'+s+'</td>'+[1,2,3].map(v=>'<td><input type="radio" name="s'+i+'" value="'+v+'"></td>').join('');
+  tb.appendChild(tr);
+});
+updateProgress();
+</script>
+</body>
+</html>
